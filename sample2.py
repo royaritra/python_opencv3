@@ -1,50 +1,20 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jun 23 23:45:59 2019
-
-@author: aritra
-"""
-
-import numpy as np 
-import cv2 
-  
-# This will return video from the first webcam on your computer. 
-cap = cv2.VideoCapture(0)   
-  
-# Define the codec and create VideoWriter object 
-fourcc = cv2.VideoWriter_fourcc(*'XVID') 
-out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480)) 
-  
-# loop runs if capturing has been initialized.  
-while(True): 
-    # reads frames from a camera  
-    # ret checks return at each frame 
-    ret, frame = cap.read()  
-  
-    # Converts to HSV color space, OCV reads colors as BGR 
-    # frame is converted to hsv 
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2) 
-      
-    # output the frame 
-    out.write(hsv)  
-      
-    # The original input frame is shown in the window  
-    cv2.imshow('Original', frame) 
-  
-    # The window showing the operated video stream  
-    cv2.imshow('frame', hsv) 
-  
-      
-    # Wait for 'a' key to stop the program  
-    if cv2.waitKey(1) & 0xFF == ord('a'): 
+import cv2
+import numpy as np
+cap = cv2.VideoCapture(0)
+while True:
+    _, frame = cap.read()
+    cv2.circle(frame, (155, 120), 5, (0, 0, 255), -1)
+    cv2.circle(frame, (480, 120), 5, (0, 0, 255), -1)
+    cv2.circle(frame, (20, 475), 5, (0, 0, 255), -1)
+    cv2.circle(frame, (620, 475), 5, (0, 0, 255), -1)
+    pts1 = np.float32([[155, 120], [480, 120], [20, 475], [620, 475]])
+    pts2 = np.float32([[0, 0], [500, 0], [0, 600], [500, 600]])
+    matrix = cv2.getPerspectiveTransform(pts1, pts2)
+    result = cv2.warpPerspective(frame, matrix, (500, 600))
+    cv2.imshow("Frame", frame)
+    cv2.imshow("Perspective transformation", result)
+    key = cv2.waitKey(1)
+    if key == 27:
         break
-  
-# Close the window / Release webcam 
-cap.release() 
-  
-# After we release our webcam, we also release the output 
-out.release()  
-  
-# De-allocate any associated memory usage  
-cv2.destroyAllWindows() 
+cap.release()
+cv2.destroyAllWindows()
